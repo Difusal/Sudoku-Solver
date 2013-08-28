@@ -7,8 +7,8 @@ bool Finished(const vector<vector<int> > &Puzzle) {
 	// calculating line and columns sum
 	for (unsigned int i = 0; i < 9; i++) {
 		// initializing sum values on each cycle start
-		int lineSum = 0;
-		int columnSum = 0;
+		unsigned int lineSum = 0;
+		unsigned int columnSum = 0;
 
 		for (unsigned int j = 0; j < 9; j++) {
 			lineSum += Puzzle[i][j];
@@ -16,14 +16,30 @@ bool Finished(const vector<vector<int> > &Puzzle) {
 
 			// now analysing sum results
 			if (i == 8 && j == 8)
-				// if the line or column sum is different than 45 (1+2+...+8+9), return false (not finished)
+				// if the line or column sum is different than 45 (1+2+...+8+9), return false (puzzle not finished)
 				if (lineSum != 45 || columnSum != 45)
 					return 0;
 		}
 	}
 
 	// calculating module sums
-	// (...)
+	for (unsigned int i = 0; i < 3; i++) {
+		for (unsigned int j = 0; j < 3; j++) {
+			// initializing module sum before checking each module
+			unsigned int moduleSum = 0;
+
+			// computing module sum
+			for (unsigned int y = 0; y < 3; y++) {
+				for (unsigned int x = 0; x < 3; x++) {
+					sum += Puzzle[i*3 + y][j*3 + x];
+				}
+			}
+
+			// if the sum of a module is different than 45, return false (puzzle not finished)
+			if (moduleSum != 45)
+				return 0;
+		}
+	}
 
 	// if everything before this is OK: Puzzle solved: return true (finished)
 	return 1;
@@ -53,7 +69,7 @@ Coords GetCoordsOfNumberInColumn(unsigned int Number, unsigned int Column, const
 	// declaring struct that holds the Number coords
 	Coords solution;
 
-	// scan the entire line
+	// scan the entire column
 	for (unsigned int i = 0; i < 9; i++) {
 		// if Number found, return solution with the respective coords
 		if (Puzzle[i][Column] == Number) {
