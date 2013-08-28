@@ -1,4 +1,4 @@
 Sudoku-Solver
 =============
 
-This program solves sudoku puzzles.
+A program to solve sudoku puzzles.
