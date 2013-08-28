@@ -29,6 +29,16 @@ bool Finished(const vector<vector<int> > &Puzzle) {
 	return 1;
 }
 
+bool NumberExistsInColumn(unsigned int Number, unsigned int Column, const vector<vector<int> > &Puzzle) {
+	for (unsigned int i = 0; i < 9; i++)
+		// if number found, return true (Number exists)
+		if (Puzzle[i][Column] == Number)
+			return true;
+
+	// if no match found, return false (Number does not exist)
+	return false;
+}
+
 bool NumberExistsInLine(unsigned int Number, unsigned int Line, const vector<vector<int> > &Puzzle) {
 	for (unsigned int j = 0; j < 9; j++)
 		// if number found, return true (Number exists)
@@ -37,6 +47,24 @@ bool NumberExistsInLine(unsigned int Number, unsigned int Line, const vector<vec
 
 	// if no match found, return false (Number does not exist)
 	return false;
+}
+
+Coords GetCoordsOfNumberInColumn(unsigned int Number, unsigned int Column, const vector<vector<int> > &Puzzle) {
+	// declaring struct that holds the Number coords
+	Coords solution;
+
+	// scan the entire line
+	for (unsigned int i = 0; i < 9; i++) {
+		// if Number found, return solution with the respective coords
+		if (Puzzle[i][Column] == Number) {
+			// defining solution x and y coords
+			solution.x = Column;
+			solution.y = i;
+
+			// returning solution
+			return solution;
+		}
+	}
 }
 
 Coords GetCoordsOfNumberInLine(unsigned int Number, unsigned int Line, const vector<vector<int> > &Puzzle) {
@@ -48,8 +76,8 @@ Coords GetCoordsOfNumberInLine(unsigned int Number, unsigned int Line, const vec
 		// if Number found, return solution with the respective coords
 		if (Puzzle[Line][j] == Number) {
 			// defining solution x and y coords
-			solution.x = Line;
-			solution.y = j;
+			solution.x = j;
+			solution.y = Line;
 
 			// returning solution
 			return solution;
