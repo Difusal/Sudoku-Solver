@@ -10,8 +10,7 @@ public:
 	static Control *GetInstance();
 	void ChangeState(ControlState newState);
 
-	void StartAllegro5();
-	void CreateAllegroDisplay();
+	void CreateAllegroDisplay(bool FullScreenMode);
 	void DisplayLoadingSplashScreen();
 	void StartMouseCursor();
 	void LoadFonts();
@@ -21,17 +20,20 @@ public:
 	void InitializeVariables();
 	void StartTimers();
 
-	void StartControlCycle();
-	void Initialize();
+	void Initialize(bool FullScreenMode);
+	bool StartControlCycle(bool FullScreenMode);
 	void Update();
 	void Draw();
 	void Terminate();
 
-	ALLEGRO_DISPLAY *GetDisplay() { return display; }
-	ALLEGRO_TIMER *GetTimer(TimerType Timer);
+	void ToggleFullScreen();
 
+	ALLEGRO_DISPLAY *GetDisplay() { return display; }
+	ALLEGRO_TIMER *GetTimer(TimerType Timer) { return timers[Timer]; }
 
 	// Public Variables
+	unsigned int ScreenWidth, ScreenHeight;
+
 	MouseCursor *Mouse;
 	float cameraPosition[2];
 
@@ -46,7 +48,8 @@ private:
 
 	vector<ALLEGRO_TIMER*> timers;
 	ALLEGRO_TIMER *timer;
-		
+	
+	bool togglingFullScreen;
 	bool done, draw;
 
 	ALLEGRO_DISPLAY *display;

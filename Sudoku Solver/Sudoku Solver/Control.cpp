@@ -1,6 +1,7 @@
 #include "Control.h"
 
 #include "MenuState.h"
+#include "SolverState.h"
 
 Control *Control::instance = NULL;
 
@@ -20,28 +21,41 @@ void Control::ChangeState(ControlState newState) {
 	states[state]->Initialize();
 }
 
-void Control::StartAllegro5() {
-	cout << "Starting Allegro 5..." << endl;
-	if (!al_init())
-		al_show_native_message_box(NULL, NULL, "Could not initialize Allegro 5", NULL, NULL, NULL);
-
-	cout << "Initializing add ons..." << endl;
-	al_init_image_addon();
-	al_init_primitives_addon();
-	al_init_font_addon();
-	al_init_ttf_addon();
-	al_init_acodec_addon();
-
-	cout << "Installing devices..." << endl;
-	al_install_mouse();
-	al_install_keyboard();
-	al_install_audio();
-}
-
-void Control::CreateAllegroDisplay() {
+void Control::CreateAllegroDisplay(bool FullScreenMode) {
 	cout << "Creating display..." << endl;
-	
-	al_set_new_display_flags(ALLEGRO_WINDOWED);
+
+	switch (FullScreenMode) {
+	case false:
+		// creating a window
+		{
+			// specifying program to run on a window
+			al_set_new_display_flags(ALLEGRO_WINDOWED);
+
+			// default values
+			ScreenWidth = DefaultScreenWidth;
+			ScreenHeight = DefaultScreenHeight;
+
+			break;
+		}
+	case true:
+		// creating full screen display
+		{
+			// specifying program to run on full screen
+			al_set_new_display_flags(ALLEGRO_FULLSCREEN);
+
+			// getting monitor info
+			ALLEGRO_DISPLAY_MODE disp_data;
+			al_get_display_mode(al_get_num_display_modes() - 1, &disp_data);
+
+			// setting screen width and height
+			ScreenWidth = disp_data.width;
+			ScreenHeight = disp_data.height;
+
+			break;
+		}
+	}
+
+	// creating display
 	display = al_create_display(ScreenWidth, ScreenHeight);
 
 	// if display was not loaded correctly, show error message and quit program
@@ -52,7 +66,6 @@ void Control::CreateAllegroDisplay() {
 
 	// changing window title
 	al_set_window_title(display, ProgramTitle);
-
 }
 
 void Control::LoadFonts() {
@@ -132,6 +145,7 @@ void Control::InitializeVariables() {
 	cameraPosition[0] = 0;
 	cameraPosition[1] = 0;
 
+	togglingFullScreen = false;
 	done = false;
 	draw = true;
 }
@@ -143,26 +157,7 @@ void Control::StartTimers() {
 }
 
 
-void Control::StartControlCycle() {
-	Initialize();
-
-	states.push_back(new MenuState());
-	state = -1;
-	ChangeState(_Menu);
-
-	cout << "Starting game control cycle..." << endl;
-	while (!done) {
-		al_wait_for_event(eventQueue, &ev);
-
-		Update();
-
-		Draw();
-	}
-
-	Terminate();
-}
-
-void Control::Initialize() {
+void Control::Initialize(bool FullScreenMode) {
 	cout << endl;
 	cout << "###########################" << endl;
 	cout << "##                       ##" << endl;
@@ -177,8 +172,7 @@ void Control::Initialize() {
 	cout << "Getting time seed for random numbers..." << endl;
 	srand ((unsigned int) time(NULL));
 
-	StartAllegro5();
-	CreateAllegroDisplay();
+	CreateAllegroDisplay(FullScreenMode);
 	LoadFonts();
 	DisplayLoadingSplashScreen();
 	StartMouseCursor();
@@ -187,6 +181,30 @@ void Control::Initialize() {
 	LoadSoundSamples();
 	InitializeVariables();
 	StartTimers();
+}
+
+bool Control::StartControlCycle(bool FullScreenMode) {
+	Initialize(FullScreenMode);
+
+	states.push_back(new MenuState());
+	states.push_back(new SolverState());
+	state = -1;
+	ChangeState(_Solver);
+
+	cout << "Starting game control cycle..." << endl;
+	while (!done) {
+		al_wait_for_event(eventQueue, &ev);
+
+		Update();
+
+		Draw();
+	}
+
+	bool returnValue = togglingFullScreen;
+
+	Terminate();
+
+	return returnValue;
 }
 
 void Control::Update() {
@@ -222,14 +240,16 @@ void Control::Draw() {
 		// Debugging code:
 		// Uncomment this block of code to display mouse coords.
 		// -----------------------------------------------------
+		/*
 		stringstream ss;
 		ss << "x:" << Mouse->x << " y:" << Mouse->y;
 		al_draw_text(mediumFont, Yellow, 0, 0, NULL, ss.str().c_str());
 		cout << ss.str() << endl;
+		*/
 
 		// flipping display and preparing buffer for next cycle
 		al_flip_display();
-		al_clear_to_color(Black);
+		al_clear_to_color(LightBlue);
 		draw = false;
 	}
 }
@@ -258,12 +278,11 @@ void Control::Terminate() {
 	for (unsigned int i = 0; i < timers.size(); i++)
 		al_destroy_timer(timers[i]);
 	timers.clear();
-
-	// deleting instance
-	delete instance;
 }
 
 
-ALLEGRO_TIMER *Control::GetTimer(TimerType Timer) {
-	return timers[Timer];
+void Control::ToggleFullScreen() {
+	cout << "Toggling full screen..." << endl;
+	togglingFullScreen = true;
+	done = true;
 }

@@ -11,17 +11,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Board.cpp" />
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="SolverState.cpp" />
     <ClCompile Include="stdIncludes.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Board.h" />
     <ClInclude Include="Control.h" />
     <ClInclude Include="globalEnums.h" />
     <ClInclude Include="MenuState.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="SolverState.h" />
     <ClInclude Include="state.h" />
     <ClInclude Include="SudokuFunctions.h" />
   </ItemGroup>

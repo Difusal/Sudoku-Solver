@@ -4,8 +4,8 @@
 MouseCursor::MouseCursor(void) {
 	cout << "Creating mouse cursor..." << endl;
 
-	x = ScreenWidth;
-	y = ScreenHeight;
+	x = Control::GetInstance()->ScreenWidth;
+	y = Control::GetInstance()->ScreenHeight;
 
 	leftMouseButtonHasJustBeenPressed = false;
 	leftMouseButtonWasBeingPressedBefore = false;

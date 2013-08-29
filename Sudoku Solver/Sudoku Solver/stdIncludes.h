@@ -23,10 +23,9 @@
 using namespace std;
 
 /* global variables */
-#define ProgramTitle "!!! Specify the program name in \"stdIncludes.h\" !!!"
-#define ScreenWidth 800
-#define ScreenHeight 600
-#define WorldBlockSize 40
+#define ProgramTitle "Sudoku Solver"
+const unsigned int DefaultScreenWidth = 800;
+const unsigned int DefaultScreenHeight = 600;
 const float FPS = 60.0;
 
 /* user friendly names */

@@ -1,7 +1,8 @@
 #pragma once
 
 enum ControlState {
-	_Menu
+	_Menu,
+	_Solver
 };
 
 enum TimerType {
