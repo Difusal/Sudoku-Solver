@@ -20,7 +20,7 @@ Button::Button(string Label, unsigned int CenterX, unsigned int CenterY, unsigne
 
 	// if font = 0, user did not specify font size, so use one according to the button height
 	if (FontSize == 0)
-		font = al_load_font(CalibriTTF, Height - 5, ALLEGRO_ALIGN_CENTER);
+		font = al_load_font(CalibriTTF, Height - 15, ALLEGRO_ALIGN_CENTER);
 	else
 		font = al_load_font(CalibriTTF, FontSize, ALLEGRO_ALIGN_CENTER);
 
@@ -61,8 +61,8 @@ void Button::Draw() {
 	al_draw_rectangle(x, y, x+width, y+height, Black, 1.0);
 
 	// printing label
-	al_draw_text(font, White, x + width/2.0 + 1, y + 0.1*font->height + 1, ALLEGRO_ALIGN_CENTER, label.c_str());
-	al_draw_text(font, Black, x + width/2.0, y + 0.1*font->height, ALLEGRO_ALIGN_CENTER, label.c_str());
+	al_draw_text(font, White, x + width/2.0 + 1, y+5 + 0.1*font->height + 1, ALLEGRO_ALIGN_CENTER, label.c_str());
+	al_draw_text(font, Black, x + width/2.0, y+5 + 0.1*font->height, ALLEGRO_ALIGN_CENTER, label.c_str());
 }
 
 Button::~Button(void) {

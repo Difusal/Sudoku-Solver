@@ -18,6 +18,7 @@ public:
 
 	vector<vector<int> > &GetPuzzle() { return Puzzle; }
 
+	void UnselectAnyCell() { SelectedCellX = 0; SelectedCellY = 0; }
 	void SetContentOfSelectedCellTo(unsigned int Number);
 
 private:

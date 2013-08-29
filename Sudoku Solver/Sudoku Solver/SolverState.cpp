@@ -3,6 +3,7 @@
 #include "SudokuFunctions.h"
 
 void SolverState::Initialize() {
+	CurrentStage = _Editing;
 	board = new Board();
 
 	unsigned int buttonX, buttonY;
@@ -11,8 +12,10 @@ void SolverState::Initialize() {
 	submitButton = new Button("Submit", buttonX, buttonY, 130, 40);
 	buttons.push_back(submitButton);
 
-	puzzleHasBeenSubmitted = false;
 	puzzleHasBeenSolved = false;
+	showPuzzleSolvedNotification = false;
+
+	Control::GetInstance()->Mouse->SetAllReleaseValuesToFalse();
 }
 
 bool SolverState::Update( ALLEGRO_EVENT *ev ) {
@@ -26,19 +29,27 @@ bool SolverState::Update( ALLEGRO_EVENT *ev ) {
 	// describing behavior when a button is pressed
 	if (submitButton->wasReleased()) {
 		submitButton->Deactivate();
-		puzzleHasBeenSubmitted = true;
+		CurrentStage = _Solving;
 	}
 
 	// keep going
-	switch (puzzleHasBeenSubmitted) {
+	switch (CurrentStage) {
+		// if puzzle has been solved
+	case _Resting:
+		{
+			showPuzzleSolvedNotification = true;
+			break;
+		}
+
 		// if puzzle has been submitted so it can be solved
-	case true:
+	case _Solving:
 		{
 			// checking if puzzle is solved
 			if (PuzzleIsSolved(board->GetPuzzle())) {
 				cout << "! ..:: PUZZLE SOLVED ::.. !" << endl;
-				cout << "Press Enter to continue testing" << endl;
-				cin.get();
+				board->UnselectAnyCell();
+				CurrentStage = _Resting;
+				return true;
 			}
 
 			// checking if there is not a single empty cell
@@ -124,7 +135,7 @@ bool SolverState::Update( ALLEGRO_EVENT *ev ) {
 		}
 
 		// if puzzle is still being edited
-	case false:
+	case _Editing:
 		{
 			// if event is a timer event
 			if (ev->type == ALLEGRO_EVENT_TIMER) {
@@ -172,11 +183,13 @@ void SolverState::Draw() {
 	// drawing buttons
 	for (Button *button: buttons)
 		button->Draw();
+
+	// if puzzle solved, show a notification
+	if (showPuzzleSolvedNotification) {
+		al_draw_text(Control::GetInstance()->largeFont, Black, Control::GetInstance()->ScreenWidth/2 + 2, Control::GetInstance()->ScreenHeight/2 - Control::GetInstance()->largeFont->height/2 + 2, ALLEGRO_ALIGN_CENTER, "PUZZLE SOLVED !");
+		al_draw_text(Control::GetInstance()->largeFont, Yellow, Control::GetInstance()->ScreenWidth/2, Control::GetInstance()->ScreenHeight/2 - Control::GetInstance()->largeFont->height/2, ALLEGRO_ALIGN_CENTER, "PUZZLE SOLVED !");
+	}
 }
 
 void SolverState::Terminate() {
-}
-
-void SolverState::DrawPuzzleBoard() {
-
 }

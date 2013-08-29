@@ -8,7 +8,7 @@ public:
 	~BasicButton(void);
 
 	void Activate() { active = true; }
-	void Deactivate() { active = false; }
+	void Deactivate() { released = false; active = false; }
 
 	unsigned int Width() { return width; }
 	unsigned int Height() { return height; }

@@ -2,6 +2,7 @@
 
 #include "stdIncludes.h"
 #include "state.h"
+#include "globalEnums.h"
 
 #include "Board.h"
 #include "Button.h"
@@ -13,14 +14,13 @@ public:
 	virtual void Draw();
 	virtual void Terminate();
 
-	void DrawPuzzleBoard();
-
 private:
+	SolverStage CurrentStage;
 	Board *board;
 
 	vector<Button*> buttons;
 	Button *submitButton;
 
-	bool puzzleHasBeenSubmitted;
 	bool puzzleHasBeenSolved;
+	bool showPuzzleSolvedNotification;
 };

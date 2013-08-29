@@ -31,6 +31,8 @@ public:
 	ALLEGRO_DISPLAY *GetDisplay() { return display; }
 	ALLEGRO_TIMER *GetTimer(TimerType Timer) { return timers[Timer]; }
 
+	void setDoneState(bool newState) { done = newState; }
+
 	// Public Variables
 	unsigned int ScreenWidth, ScreenHeight;
 

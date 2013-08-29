@@ -71,7 +71,7 @@ void Control::CreateAllegroDisplay(bool FullScreenMode) {
 void Control::LoadFonts() {
 	cout << "Loading fonts..." << endl;
 
-	largeFont = al_load_font(CalibriTTF, 30, ALLEGRO_ALIGN_CENTER);
+	largeFont = al_load_font(CalibriTTF, 70, ALLEGRO_ALIGN_CENTER);
 	fonts.push_back(largeFont);
 
 	mediumFont = al_load_font(CalibriTTF, 20, ALLEGRO_ALIGN_CENTER);
@@ -186,7 +186,7 @@ bool Control::StartControlCycle(bool FullScreenMode) {
 	states.push_back(new MenuState());
 	states.push_back(new SolverState());
 	state = -1;
-	ChangeState(_Solver);
+	ChangeState(_Menu);
 
 	cout << "Starting game control cycle..." << endl;
 	while (!done) {
@@ -196,6 +196,7 @@ bool Control::StartControlCycle(bool FullScreenMode) {
 
 		Draw();
 	}
+	states[state]->Terminate();
 
 	bool returnValue = togglingFullScreen;
 
