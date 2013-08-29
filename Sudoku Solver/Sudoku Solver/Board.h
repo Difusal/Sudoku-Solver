@@ -11,6 +11,11 @@ public:
 
 	bool HasASelectedCell();
 
+	unsigned int X() { return BoardX; }
+	unsigned int Y() { return BoardY; }
+	unsigned int Width() { return BoardWidth; }
+	unsigned int Height() { return BoardHeight; }
+
 	vector<vector<int> > *GetPuzzle();
 
 	void SetContentOfSelectedCellTo(unsigned int Number);
