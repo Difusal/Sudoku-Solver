@@ -36,7 +36,7 @@ const float FPS = 60.0;
 #define LightGray al_map_rgb(192, 192, 192)
 #define DarkBlue al_map_rgb(0, 0, 150)
 #define Blue al_map_rgb(0, 0, 255)
-#define LightBlue al_map_rgb(14, 108, 150)
+#define LightBlue al_map_rgb(59, 89, 152)
 #define DarkGreen al_map_rgb(0, 200, 0)
 #define Green al_map_rgb(0, 255, 0)
 #define DarkRed al_map_rgb(200, 0, 0)

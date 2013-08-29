@@ -33,8 +33,8 @@ bool MouseCursor::Update(ALLEGRO_EVENT *ev) {
 
 	// tracking mouse position
 	if (ev->type == ALLEGRO_EVENT_MOUSE_AXES) {
-		x = ev->mouse.x + Control::GetInstance()->cameraPosition[0];
-		y = ev->mouse.y + Control::GetInstance()->cameraPosition[1];
+		x = ev->mouse.x;
+		y = ev->mouse.y;
 
 		prevMouseRawX = ev->mouse.x;
 		prevMouseRawY = ev->mouse.y;
@@ -93,8 +93,8 @@ bool MouseCursor::Update(ALLEGRO_EVENT *ev) {
 }
 
 bool MouseCursor::CorrectMousePosition() {
-	x = prevMouseRawX + Control::GetInstance()->cameraPosition[0];
-	y = prevMouseRawY + Control::GetInstance()->cameraPosition[1];
+	x = prevMouseRawX;
+	y = prevMouseRawY;
 
 	return true;
 }

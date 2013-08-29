@@ -35,7 +35,6 @@ public:
 	unsigned int ScreenWidth, ScreenHeight;
 
 	MouseCursor *Mouse;
-	float cameraPosition[2];
 
 	vector<ALLEGRO_FONT*> fonts;
 	ALLEGRO_FONT *largeFont;

@@ -8,15 +8,46 @@ Board::Board(void) {
 
 	// now leaving an equal x and y margin
 	BoardX = BoardY = (Control::GetInstance()->ScreenHeight - BoardHeight) / 2.0;
+
+	// initializing puzzle vector
+	for (unsigned int i = 0; i < 9; i++)
+		Puzzle.push_back(vector<int> (9, 0));
+
+	font = al_load_font(CalibriTTF, 25, ALLEGRO_ALIGN_CENTER);
+	if (!font) {
+		al_show_native_message_box(Control::GetInstance()->GetDisplay(), "Error", "Could not load font file.", "If you have just created the project, create the following folder structure:\n\"yourProjectFolder\\res\\fonts\"\n\nThen place calibri.ttf inside the fonts folder.\nYou can get the font on the internet easily.\n\nPress OK to quit the program.", NULL, ALLEGRO_MESSAGEBOX_ERROR);
+		exit(-1);
+	}
 }
 
 void Board::Update() {
+	// checking if user selected a board cell to edit
+	if (Control::GetInstance()->Mouse->leftMouseButtonReleased){
+		// checking if mouse click is inside board boundaries
+		if (BoardX < Control::GetInstance()->Mouse->x && Control::GetInstance()->Mouse->x < BoardX+BoardWidth &&
+			BoardY < Control::GetInstance()->Mouse->y && Control::GetInstance()->Mouse->y < BoardY+BoardHeight) {
+				// assigning coordinates of selected cell based on mouse click
+				SelectedCellX = BoardX + ((Control::GetInstance()->Mouse->x - BoardX) / CellSize) * CellSize;
+				SelectedCellY = BoardY + ((Control::GetInstance()->Mouse->y - BoardY) / CellSize) * CellSize;
 
+				cout << SelectedCellX << "  " << SelectedCellY << endl;
+		}
+		// unselect any selected cell
+		else {
+			// if any of these variables is set to 0, it means no cell is selected
+			SelectedCellX = 0;
+			SelectedCellY = 0;
+		}
+	}
 }
 
 void Board::Draw() {
 	// white background
 	al_draw_filled_rectangle(BoardX, BoardY, BoardX+BoardWidth, BoardY+BoardHeight, White);
+
+	// if any cell is selected, draw different background
+	if (SelectedCellX != 0 && SelectedCellY != 0)
+		al_draw_filled_rectangle(SelectedCellX, SelectedCellY, SelectedCellX+CellSize, SelectedCellY+CellSize, Yellow);
 
 	// complementary guide lines
 	for (unsigned int i = 1; i <= 8; i++) {
@@ -38,8 +69,45 @@ void Board::Draw() {
 
 	// limits
 	al_draw_rectangle(BoardX, BoardY, BoardX+BoardWidth, BoardY+BoardHeight, Black, 2.0);
+
+	// drawing numbers on board
+	stringstream ss;
+	for (unsigned int i = 0; i < 9; i++) {
+		for (unsigned int j = 0; j < 9; j++) {
+			if (Puzzle[i][j] != 0) {
+				// clearing string stream
+				ss.str(string());
+
+				// sending number to string
+				ss << Puzzle[i][j];
+
+				// printing number
+				al_draw_text(font, Black, BoardX + j*CellSize + CellSize/2.0, BoardY + i*CellSize + CellSize/4.0, ALLEGRO_ALIGN_CENTER, ss.str().c_str());
+			}
+		}
+	}
 }
 
 Board::~Board(void) {
+	// destroying used font
+	al_destroy_font(font);
+}
 
+
+bool Board::HasASelectedCell() {
+	// if none of the coords is 0, that means there is a selected cell
+	if (SelectedCellX != 0 && SelectedCellY != 0)
+		return true;
+
+	// return false otherwise
+	return false;
+}
+
+void Board::SetContentOfSelectedCellTo(unsigned int Number) {
+	unsigned int x, y;
+	x = (SelectedCellX - BoardX) / CellSize;
+	y = (SelectedCellY - BoardY) / CellSize;
+
+	// setting new content of selected cell
+	Puzzle[y][x] = Number;
 }
