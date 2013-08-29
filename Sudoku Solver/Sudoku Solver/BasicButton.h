@@ -7,6 +7,9 @@ public:
 	void Update();
 	~BasicButton(void);
 
+	void Activate() { active = true; }
+	void Deactivate() { active = false; }
+
 	unsigned int Width() { return width; }
 	unsigned int Height() { return height; }
 
@@ -14,6 +17,8 @@ public:
 	bool wasReleased() { return released; }
 
 protected:
+	bool active;
+
 	string label;
 	unsigned int x, y;
 	unsigned int width, height;

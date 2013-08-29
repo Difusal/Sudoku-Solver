@@ -7,7 +7,7 @@ struct Coords {
 	unsigned int y;
 };
 
-bool Finished(const vector<vector<int> > &Puzzle) {
+bool PuzzleIsSolved(const vector<vector<int> > &Puzzle) {
 	// calculating line and columns sum
 	for (unsigned int i = 0; i < 9; i++) {
 		// initializing sum values on each cycle start
@@ -49,6 +49,20 @@ bool Finished(const vector<vector<int> > &Puzzle) {
 	return 1;
 }
 
+bool NoEmptyCellsLeft(const vector<vector<int> > &Puzzle) {
+	// computing module sum
+	for (unsigned int i = 0; i < 9; i++) {
+		for (unsigned int j = 0; j < 9; j++) {
+			// if an empty cell is found, return false
+			if (Puzzle[i][j] == 0)
+				return false;
+		}
+	}
+
+	// if no empty cells found, return true
+	return true;
+}
+
 bool NumberExistsInColumn(unsigned int Number, unsigned int Column, const vector<vector<int> > &Puzzle) {
 	for (unsigned int i = 0; i < 9; i++)
 		// if number found, return true (Number exists)
@@ -69,6 +83,76 @@ bool NumberExistsInLine(unsigned int Number, unsigned int Line, const vector<vec
 	return false;
 }
 
+bool NumberExistsInModule(unsigned int Number, unsigned int ModuleX, unsigned int ModuleY, const vector<vector<int> > &Puzzle) {
+	for (unsigned int i = 0; i < 3; i++) {
+		for (unsigned int j = 0; j < 3; j++) {
+			// if there is a match, return true (number exists)
+			if (Number == Puzzle[3*ModuleY + i][3*ModuleX + j])
+				return true;
+		}
+	}
+
+	// if no match found, return false
+	return false;
+}
+
+bool OnlyOnePossibility(const vector<vector<int> > &Possibilities) {
+	// initializing counter of possible places to put the current number
+	unsigned int possiblePlacementsCounter = 0;
+
+	// going through the entire module being scanned
+	for (unsigned int i = 0; i < Possibilities.size(); i++) {
+		for (unsigned int j = 0; j < Possibilities[i].size(); j++) {
+			// if '1' (aka possible place) is found, increment counter
+			if (Possibilities[i][j] == 1)
+				possiblePlacementsCounter++;
+
+			// if counter is already bigger than 1, function can already return false: which means there is still more than one possibility
+			if (possiblePlacementsCounter > 1)
+				return false;
+		}
+	}
+
+	// making sure that after the entire scan the counter only counter 1 occurrence. if so return true
+	if (possiblePlacementsCounter == 1)
+		return true;
+
+	// return false otherwise
+	return false;
+}
+
+void PlaceNumberOnTheOnlyPossibleCell(unsigned int Number, unsigned int ModuleX, unsigned int ModuleY, vector<vector<int> > &Puzzle, const vector<vector<int> > &Possibilities) {
+	// initializing counter of possible places to put the current number
+	unsigned int possiblePlacementsCounter = 0;
+
+	unsigned int possibleCellX, possibleCellY;
+
+	// going through the entire module being scanned
+	for (unsigned int i = 0; i < Possibilities.size(); i++) {
+		for (unsigned int j = 0; j < Possibilities[i].size(); j++) {
+
+			// if '1' (aka possible place) is found
+			if (Possibilities[i][j] == 1) {
+
+				// increment counter
+				possiblePlacementsCounter++;
+
+				// and save coords
+				possibleCellX = j;
+				possibleCellY = i;
+			}
+
+			// if counter is already bigger than 1, function can already return: which means there is still more than one possibility...
+			if (possiblePlacementsCounter > 1)
+				return;
+		}
+	}
+
+	// if counter is equal to 1, place number there
+	if (possiblePlacementsCounter == 1)
+		Puzzle[3*ModuleY + possibleCellY][3*ModuleX + possibleCellX] = Number;
+}
+
 Coords GetCoordsOfNumberInColumn(unsigned int Number, unsigned int Column, const vector<vector<int> > &Puzzle) {
 	// declaring struct that holds the Number coords
 	Coords solution;
@@ -81,10 +165,12 @@ Coords GetCoordsOfNumberInColumn(unsigned int Number, unsigned int Column, const
 			solution.x = Column;
 			solution.y = i;
 
-			// returning solution
-			return solution;
+			break;
 		}
 	}
+
+	// returning solution
+	return solution;
 }
 
 Coords GetCoordsOfNumberInLine(unsigned int Number, unsigned int Line, const vector<vector<int> > &Puzzle) {
@@ -99,8 +185,10 @@ Coords GetCoordsOfNumberInLine(unsigned int Number, unsigned int Line, const vec
 			solution.x = j;
 			solution.y = Line;
 
-			// returning solution
-			return solution;
+			break;
 		}
 	}
+
+	// returning solution
+	return solution;
 }

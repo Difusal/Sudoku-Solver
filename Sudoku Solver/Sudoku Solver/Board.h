@@ -16,7 +16,7 @@ public:
 	unsigned int Width() { return BoardWidth; }
 	unsigned int Height() { return BoardHeight; }
 
-	vector<vector<int> > *GetPuzzle();
+	vector<vector<int> > &GetPuzzle() { return Puzzle; }
 
 	void SetContentOfSelectedCellTo(unsigned int Number);
 

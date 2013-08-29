@@ -22,4 +22,5 @@ private:
 	Button *submitButton;
 
 	bool puzzleHasBeenSubmitted;
+	bool puzzleHasBeenSolved;
 };

@@ -29,8 +29,6 @@ void Board::Update() {
 				// assigning coordinates of selected cell based on mouse click
 				SelectedCellX = BoardX + ((Control::GetInstance()->Mouse->x - BoardX) / CellSize) * CellSize;
 				SelectedCellY = BoardY + ((Control::GetInstance()->Mouse->y - BoardY) / CellSize) * CellSize;
-
-				cout << SelectedCellX << "  " << SelectedCellY << endl;
 		}
 		// unselect any selected cell
 		else {

@@ -2,6 +2,10 @@
 #include "Control.h"
 
 void BasicButton::Update() {
+	// if button is not active, do nothing
+	if (!active)
+		return;
+
 	// setting bool variables to their default value
 	beingPressed = false;
 	beingHovered = false;

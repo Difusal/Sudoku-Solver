@@ -2,6 +2,9 @@
 #include "Control.h"
 
 Button::Button(string Label, unsigned int CenterX, unsigned int CenterY, unsigned int Width, unsigned int Height, unsigned int FontSize) {
+	// default active value
+	active = true;
+
 	// setting button label
 	label = Label;
 
@@ -35,6 +38,10 @@ Button::Button(string Label, unsigned int CenterX, unsigned int CenterY, unsigne
 }
 
 void Button::Draw() {
+	// if button is not active, do nothing
+	if (!active)
+		return;
+
 	// if button is being hovered use a different button color
 	ALLEGRO_COLOR buttonColor;
 	if (beingPressed)
