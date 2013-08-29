@@ -1,3 +1,7 @@
+#pragma once
+
+#include "stdIncludes.h"
+
 struct Coords {
 	unsigned int x;
 	unsigned int y;
@@ -14,11 +18,11 @@ bool Finished(const vector<vector<int> > &Puzzle) {
 			lineSum += Puzzle[i][j];
 			columnSum += Puzzle[j][i];
 
-			// now analysing sum results
+			// now analyzing sum results
 			if (i == 8 && j == 8)
 				// if the line or column sum is different than 45 (1+2+...+8+9), return false (puzzle not finished)
-				if (lineSum != 45 || columnSum != 45)
-					return 0;
+					if (lineSum != 45 || columnSum != 45)
+						return 0;
 		}
 	}
 
@@ -31,7 +35,7 @@ bool Finished(const vector<vector<int> > &Puzzle) {
 			// computing module sum
 			for (unsigned int y = 0; y < 3; y++) {
 				for (unsigned int x = 0; x < 3; x++) {
-					sum += Puzzle[i*3 + y][j*3 + x];
+					moduleSum += Puzzle[i*3 + y][j*3 + x];
 				}
 			}
 
@@ -48,8 +52,8 @@ bool Finished(const vector<vector<int> > &Puzzle) {
 bool NumberExistsInColumn(unsigned int Number, unsigned int Column, const vector<vector<int> > &Puzzle) {
 	for (unsigned int i = 0; i < 9; i++)
 		// if number found, return true (Number exists)
-		if (Puzzle[i][Column] == Number)
-			return true;
+			if (Puzzle[i][Column] == Number)
+				return true;
 
 	// if no match found, return false (Number does not exist)
 	return false;
@@ -58,8 +62,8 @@ bool NumberExistsInColumn(unsigned int Number, unsigned int Column, const vector
 bool NumberExistsInLine(unsigned int Number, unsigned int Line, const vector<vector<int> > &Puzzle) {
 	for (unsigned int j = 0; j < 9; j++)
 		// if number found, return true (Number exists)
-		if (Puzzle[Line][j] == Number)
-			return true;
+			if (Puzzle[Line][j] == Number)
+				return true;
 
 	// if no match found, return false (Number does not exist)
 	return false;
