@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdIncludes.h"
+#include "globalEnums.h"
 
 class Board {
 public:
@@ -20,6 +21,7 @@ public:
 
 	void UnselectAnyCell() { SelectedCellX = 0; SelectedCellY = 0; }
 	void SetContentOfSelectedCellTo(unsigned int Number);
+	void MoveCellSelection(Direction direction);
 
 private:
 	vector<vector<int> > Puzzle;

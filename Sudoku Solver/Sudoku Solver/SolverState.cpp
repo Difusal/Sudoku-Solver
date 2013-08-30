@@ -293,6 +293,16 @@ bool SolverState::Update( ALLEGRO_EVENT *ev ) {
 
 			// if there is a selected cell and event is a keyboard event
 			if (board->HasASelectedCell() && ev->type == ALLEGRO_EVENT_KEY_DOWN) {
+				// moving cell selection
+				if (ev->keyboard.keycode == ALLEGRO_KEY_RIGHT)
+					board->MoveCellSelection(RIGHT);
+				if (ev->keyboard.keycode == ALLEGRO_KEY_LEFT)
+					board->MoveCellSelection(LEFT);
+				if (ev->keyboard.keycode == ALLEGRO_KEY_DOWN)
+					board->MoveCellSelection(DOWN);
+				if (ev->keyboard.keycode == ALLEGRO_KEY_UP)
+					board->MoveCellSelection(UP);
+
 				// delete cell content (set it to 0)
 				if (ev->keyboard.keycode == ALLEGRO_KEY_0 || ev->keyboard.keycode == ALLEGRO_KEY_BACKSPACE || ev->keyboard.keycode == ALLEGRO_KEY_DELETE)
 					board->SetContentOfSelectedCellTo(0);

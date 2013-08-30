@@ -1,5 +1,12 @@
 #pragma once
 
+enum Direction {
+	RIGHT,
+	LEFT,
+	DOWN,
+	UP
+};
+
 enum ControlState {
 	_Menu,
 	_Solver

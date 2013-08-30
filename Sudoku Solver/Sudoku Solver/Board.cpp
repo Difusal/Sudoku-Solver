@@ -109,3 +109,23 @@ void Board::SetContentOfSelectedCellTo(unsigned int Number) {
 	// setting new content of selected cell
 	Puzzle[y][x] = Number;
 }
+
+void Board::MoveCellSelection( Direction direction ) {
+	if (!HasASelectedCell())
+		return;
+
+	switch (direction) {
+	case RIGHT:
+		SelectedCellX += CellSize;
+		break;
+	case LEFT:
+		SelectedCellX -= CellSize;
+		break;
+	case DOWN:
+		SelectedCellY += CellSize;
+		break;
+	case UP:
+		SelectedCellY -= CellSize;
+		break;
+	}
+}
