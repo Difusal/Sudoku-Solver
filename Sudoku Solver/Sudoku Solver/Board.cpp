@@ -9,6 +9,10 @@ Board::Board(void) {
 	// now leaving an equal x and y margin
 	BoardX = BoardY = (Control::GetInstance()->ScreenHeight - BoardHeight) / 2.0;
 
+	// initializing selected cell coords ({0, 0} means no cell is selected)
+	SelectedCellX = 0;
+	SelectedCellY = 0;
+
 	// initializing puzzle vector
 	for (unsigned int i = 0; i < 9; i++)
 		Puzzle.push_back(vector<int> (9, 0));
