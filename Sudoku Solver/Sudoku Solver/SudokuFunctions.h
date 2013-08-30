@@ -118,6 +118,20 @@ bool NumberExistsInModule(unsigned int Number, unsigned int ModuleX, unsigned in
 	return false;
 }
 
+bool NumberCanBePlacedInCell(unsigned int Number, unsigned int Line, unsigned int Column, const vector<vector<int> > &Puzzle) {
+	if (NumberExistsInLine(Number, Line, Puzzle))
+		return false;
+
+	if (NumberExistsInColumn(Number, Column, Puzzle))
+		return false;
+
+	if (NumberExistsInModule(Number, Column/3, Line/3, Puzzle))
+		return false;
+
+	// if all conditions are met, number can be placed
+	return true;
+}
+
 bool OnlyOnePossibility(const vector<vector<int> > &Possibilities) {
 	// initializing counter of possible places to put the current number
 	unsigned int possiblePlacementsCounter = 0;
@@ -175,6 +189,7 @@ void PlaceNumberOnTheOnlyPossibleCell(unsigned int Number, unsigned int ModuleX,
 		Puzzle[3*ModuleY + possibleCellY][3*ModuleX + possibleCellX] = Number;
 }
 
+/*
 Coords GetCoordsOfNumberInColumn(unsigned int Number, unsigned int Column, const vector<vector<int> > &Puzzle) {
 	// declaring struct that holds the Number coords
 	Coords solution;
@@ -213,4 +228,52 @@ Coords GetCoordsOfNumberInLine(unsigned int Number, unsigned int Line, const vec
 
 	// returning solution
 	return solution;
+}
+*/
+
+vector<unsigned int> GetMissingNumbersOnLine(unsigned int Line, const vector<vector<int> > &Puzzle) {
+	// initializing vector with all numbers from 1 to 9
+	vector<unsigned int> missingNumbers;
+	for (int i = 1; i <= 9; i++)
+		missingNumbers.push_back(i);
+
+	// going through line
+	for (unsigned int i = 0; i < 9; i++) {
+
+		// if a number was found
+		if (Puzzle[Line][i] != 0) {
+
+			// go through missing numbers vector
+			for (unsigned int j = 0; j < missingNumbers.size(); j++) {
+
+				// and if there is a match
+				if (missingNumbers[j] == Puzzle[Line][i])
+
+					// remove it from missing numbers vector
+					missingNumbers.erase(missingNumbers.begin() + j);
+			}
+		}
+	}
+
+	// returning vector
+	return missingNumbers;
+}
+
+vector<unsigned int> GetPositionsOfEmptyCellsOnLine(unsigned int Line, const vector<vector<int> > &Puzzle) {
+	// declaring vector that will hold the position of the empty cells
+	vector<unsigned int> emptyCellsPostions;
+	
+	// going through line
+	for (unsigned int i = 0; i < 9; i++) {
+
+		// if an empty cell was found
+		if (Puzzle[Line][i] == 0) {
+
+			// add current scanning position to empty cells positions vector
+			emptyCellsPostions.push_back(i);
+		}
+	}
+
+	// returning vector
+	return emptyCellsPostions;
 }

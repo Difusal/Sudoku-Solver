@@ -98,13 +98,31 @@ bool SolverState::Update( ALLEGRO_EVENT *ev ) {
 					continue;
 
 				// getting vector of missing numbers on that line
+				vector<unsigned int> missingNumbers = GetMissingNumbersOnLine(line, board->GetPuzzle());
 
-
-				// getting vector of empty cells on that line
-
+				// getting vector of empty cells positions on that line
+				vector<unsigned int> emptyCellsPositions = GetPositionsOfEmptyCellsOnLine(line, board->GetPuzzle());
 
 				// checking if there is only one missing number available to be placed for each of the empty cells
+				// going through each empty cell on the line
+				for (unsigned int i = 0; i < emptyCellsPositions.size(); i++) {
 
+					// initializing vector
+					vector<unsigned int> positionsOfMissingNumbersElementsThatCanBePlacedOnCurrentCell;
+
+					// going through missing numbers on that line
+					for (unsigned int j = 0; j < missingNumbers.size(); j++) {
+
+						// if current missing number being scanned can be placed on that cell
+						if (NumberCanBePlacedInCell(missingNumbers[j], line, emptyCellsPositions[i], board->GetPuzzle()))
+							// add it to this vector
+							positionsOfMissingNumbersElementsThatCanBePlacedOnCurrentCell.push_back(j);
+					}
+
+					// if at the end, on this cell, there's only one possibility, pace number there
+					if (positionsOfMissingNumbersElementsThatCanBePlacedOnCurrentCell.size() == 1)
+						board->GetPuzzle()[line][emptyCellsPositions[i]] = missingNumbers[positionsOfMissingNumbersElementsThatCanBePlacedOnCurrentCell[0]];
+				}
 			}
 
 
