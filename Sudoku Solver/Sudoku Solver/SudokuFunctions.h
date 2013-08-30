@@ -85,20 +85,20 @@ bool ColumnIsComplete(unsigned int Column, const vector<vector<int> > &Puzzle) {
 	return true;
 }
 
-bool NumberExistsInColumn(unsigned int Number, unsigned int Column, const vector<vector<int> > &Puzzle) {
-	for (unsigned int i = 0; i < 9; i++)
+bool NumberExistsInLine(unsigned int Number, unsigned int Line, const vector<vector<int> > &Puzzle) {
+	for (unsigned int j = 0; j < 9; j++)
 		// if number found, return true (Number exists)
-			if (Puzzle[i][Column] == Number)
+			if (Puzzle[Line][j] == Number)
 				return true;
 
 	// if no match found, return false (Number does not exist)
 	return false;
 }
 
-bool NumberExistsInLine(unsigned int Number, unsigned int Line, const vector<vector<int> > &Puzzle) {
-	for (unsigned int j = 0; j < 9; j++)
+bool NumberExistsInColumn(unsigned int Number, unsigned int Column, const vector<vector<int> > &Puzzle) {
+	for (unsigned int i = 0; i < 9; i++)
 		// if number found, return true (Number exists)
-			if (Puzzle[Line][j] == Number)
+			if (Puzzle[i][Column] == Number)
 				return true;
 
 	// if no match found, return false (Number does not exist)
@@ -250,7 +250,35 @@ vector<unsigned int> GetMissingNumbersOnLine(unsigned int Line, const vector<vec
 				if (missingNumbers[j] == Puzzle[Line][i])
 
 					// remove it from missing numbers vector
-					missingNumbers.erase(missingNumbers.begin() + j);
+						missingNumbers.erase(missingNumbers.begin() + j);
+			}
+		}
+	}
+
+	// returning vector
+	return missingNumbers;
+}
+
+vector<unsigned int> GetMissingNumbersOnColumn(unsigned int Column, const vector<vector<int> > &Puzzle) {
+	// initializing vector with all numbers from 1 to 9
+	vector<unsigned int> missingNumbers;
+	for (int i = 1; i <= 9; i++)
+		missingNumbers.push_back(i);
+
+	// going through line
+	for (unsigned int i = 0; i < 9; i++) {
+
+		// if a number was found
+		if (Puzzle[i][Column] != 0) {
+
+			// go through missing numbers vector
+			for (unsigned int j = 0; j < missingNumbers.size(); j++) {
+
+				// and if there is a match
+				if (missingNumbers[j] == Puzzle[i][Column])
+
+					// remove it from missing numbers vector
+						missingNumbers.erase(missingNumbers.begin() + j);
 			}
 		}
 	}
@@ -262,12 +290,31 @@ vector<unsigned int> GetMissingNumbersOnLine(unsigned int Line, const vector<vec
 vector<unsigned int> GetPositionsOfEmptyCellsOnLine(unsigned int Line, const vector<vector<int> > &Puzzle) {
 	// declaring vector that will hold the position of the empty cells
 	vector<unsigned int> emptyCellsPostions;
-	
+
 	// going through line
 	for (unsigned int i = 0; i < 9; i++) {
 
 		// if an empty cell was found
 		if (Puzzle[Line][i] == 0) {
+
+			// add current scanning position to empty cells positions vector
+			emptyCellsPostions.push_back(i);
+		}
+	}
+
+	// returning vector
+	return emptyCellsPostions;
+}
+
+vector<unsigned int> GetPositionsOfEmptyCellsOnColumn(unsigned int Column, const vector<vector<int> > &Puzzle) {
+	// declaring vector that will hold the position of the empty cells
+	vector<unsigned int> emptyCellsPostions;
+
+	// going through line
+	for (unsigned int i = 0; i < 9; i++) {
+
+		// if an empty cell was found
+		if (Puzzle[i][Column] == 0) {
 
 			// add current scanning position to empty cells positions vector
 			emptyCellsPostions.push_back(i);

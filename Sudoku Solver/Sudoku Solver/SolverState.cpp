@@ -132,27 +132,36 @@ bool SolverState::Update( ALLEGRO_EVENT *ev ) {
 				// skip if scanning line is already complete
 				if (ColumnIsComplete(column, board->GetPuzzle()))
 					continue;
-			}
 
+				// getting vector of missing numbers on that line
+				vector<unsigned int> missingNumbers = GetMissingNumbersOnColumn(column, board->GetPuzzle());
 
-			// trying to complete a module
-			for (unsigned int moduleBeingScannedY = 0; moduleBeingScannedY < 3; moduleBeingScannedY++) {
-				for (unsigned int moduleBeingScannedX = 0; moduleBeingScannedX < 3; moduleBeingScannedX++) {
+				// getting vector of empty cells positions on that line
+				vector<unsigned int> emptyCellsPositions = GetPositionsOfEmptyCellsOnColumn(column, board->GetPuzzle());
 
-					// getting vector of missing numbers on that module
+				// checking if there is only one missing number available to be placed for each of the empty cells
+				// going through each empty cell on the column
+				for (unsigned int i = 0; i < emptyCellsPositions.size(); i++) {
 
+					// initializing vector
+					vector<unsigned int> positionsOfMissingNumbersElementsThatCanBePlacedOnCurrentCell;
 
-					// getting vector of empty cells on that module
+					// going through missing numbers on that column
+					for (unsigned int j = 0; j < missingNumbers.size(); j++) {
 
+						// if current missing number being scanned can be placed on that cell
+						if (NumberCanBePlacedInCell(missingNumbers[j], emptyCellsPositions[i], column, board->GetPuzzle()))
+							// add it to this vector
+								positionsOfMissingNumbersElementsThatCanBePlacedOnCurrentCell.push_back(j);
+					}
 
-					// checking if there is only one missing number available to be placed for each of the empty cells
-
+					// if at the end, on this cell, there's only one possibility, pace number there
+					if (positionsOfMissingNumbersElementsThatCanBePlacedOnCurrentCell.size() == 1)
+						board->GetPuzzle()[emptyCellsPositions[i]][column] = missingNumbers[positionsOfMissingNumbersElementsThatCanBePlacedOnCurrentCell[0]];
 				}
 			}
 
 
-			////////////////////////////////////////////////////
-			// trying to place number using the most basic logic
 			// trying to place a number, all the way from 1 to 9
 			if (numberToBePlaced > 9)
 				numberToBePlaced = 1;
