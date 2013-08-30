@@ -63,6 +63,28 @@ bool NoEmptyCellsLeft(const vector<vector<int> > &Puzzle) {
 	return true;
 }
 
+bool LineIsComplete(unsigned int Line, const vector<vector<int> > &Puzzle) {
+	for (unsigned int i = 0; i < 9; i++) {
+		// if an empty cell found, return false (line is not completed)
+		if (Puzzle[Line][i] == 0)
+			return false;
+	}
+
+	// return true otherwise
+	return true;
+}
+
+bool ColumnIsComplete(unsigned int Column, const vector<vector<int> > &Puzzle) {
+	for (unsigned int i = 0; i < 9; i++) {
+		// if an empty cell found, return false (column is not completed)
+		if (Puzzle[i][Column] == 0)
+			return false;
+	}
+
+	// return true otherwise
+	return true;
+}
+
 bool NumberExistsInColumn(unsigned int Number, unsigned int Column, const vector<vector<int> > &Puzzle) {
 	for (unsigned int i = 0; i < 9; i++)
 		// if number found, return true (Number exists)

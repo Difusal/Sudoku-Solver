@@ -15,12 +15,19 @@ public:
 	virtual void Terminate();
 
 private:
+	unsigned int titleX, titleY;
+
 	SolverStage CurrentStage;
 	Board *board;
 
 	vector<Button*> buttons;
 	Button *submitButton;
 
+	unsigned int numberToBePlaced;
+	unsigned int startTime, endTime, elapsedTime;
+	
 	bool puzzleHasBeenSolved;
 	bool showPuzzleSolvedNotification;
+
+	ALLEGRO_FONT *titleFont;
 };
