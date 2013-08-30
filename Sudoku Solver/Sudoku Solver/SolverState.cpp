@@ -14,6 +14,7 @@ void SolverState::Initialize() {
 
 	numberToBePlaced = 1;
 
+	solverJustStarted = true;
 	puzzleHasBeenSolved = false;
 	showPuzzleSolvedNotification = false;
 
@@ -82,11 +83,40 @@ bool SolverState::Update( ALLEGRO_EVENT *ev ) {
 				return true;
 			}
 
-			// checking if there is not a single empty cell
-			// which means that the puzzle is solved incorrectly, since we just checked if the puzzle was solved correctly
-			if (NoEmptyCellsLeft(board->GetPuzzle())) {
-				cout << "Error" << endl;
-				return true;
+			// checking for errors in each line
+			for (unsigned int line = 0; line < 9; line++) {
+
+				// if there is only one empty cell on that line
+				if (GetPositionsOfEmptyCellsOnLine(line, board->GetPuzzle()).size() == 1) {
+
+					// but the missing number cannot be placed there, something is wrong!
+					if (!NumberCanBePlacedInCell(GetMissingNumbersOnLine(line, board->GetPuzzle())[0], line, GetPositionsOfEmptyCellsOnLine(line, board->GetPuzzle())[0], board->GetPuzzle())) {
+						cout << "! ERROR !" << endl;
+						break;
+					}
+				}
+			}
+			// checking for errors in each column
+			for (unsigned int column = 0; column < 9; column++) {
+
+				// if there is only one empty cell on that line
+				if (GetPositionsOfEmptyCellsOnColumn(column, board->GetPuzzle()).size() == 1) {
+
+					// but the missing number cannot be placed there, something is wrong!
+					if (!NumberCanBePlacedInCell(GetMissingNumbersOnColumn(column, board->GetPuzzle())[0], column, GetPositionsOfEmptyCellsOnColumn(column, board->GetPuzzle())[0], board->GetPuzzle())) {
+						cout << "! ERROR !" << endl;
+						break;
+					}
+				}
+			}
+
+			if (!solverJustStarted && puzzleClone == board->GetPuzzle())
+				cout << "Solver Froze!" << endl;
+
+			// checking if solver is frozen and needs to use attempts in order to complete puzzle
+			if (numberToBePlaced == 3) {
+				solverJustStarted = false;
+				puzzleClone = board->GetPuzzle();
 			}
 
 

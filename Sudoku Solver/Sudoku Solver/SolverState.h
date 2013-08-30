@@ -19,13 +19,15 @@ private:
 
 	SolverStage CurrentStage;
 	Board *board;
+	vector<vector<int> > puzzleClone;
 
 	vector<Button*> buttons;
 	Button *submitButton;
 
 	unsigned int numberToBePlaced;
 	unsigned int startTime, endTime, elapsedTime;
-	
+
+	bool solverJustStarted;
 	bool puzzleHasBeenSolved;
 	bool showPuzzleSolvedNotification;
 

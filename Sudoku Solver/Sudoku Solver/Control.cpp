@@ -215,12 +215,12 @@ void Control::Update() {
 	// updating mouse
 	draw = Mouse->Update(&ev);
 
-	// updating current state
-	states[state]->Update(&ev);
-
 	// correcting mouse position due to camera movement
 	if (ev.type != ALLEGRO_EVENT_MOUSE_AXES)
 		draw = Mouse->CorrectMousePosition();
+
+	// updating current state
+	states[state]->Update(&ev);
 
 	// setting all mouse release values to false on timer event
 	if (ev.type == ALLEGRO_EVENT_TIMER) {

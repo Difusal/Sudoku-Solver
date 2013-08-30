@@ -189,48 +189,6 @@ void PlaceNumberOnTheOnlyPossibleCell(unsigned int Number, unsigned int ModuleX,
 		Puzzle[3*ModuleY + possibleCellY][3*ModuleX + possibleCellX] = Number;
 }
 
-/*
-Coords GetCoordsOfNumberInColumn(unsigned int Number, unsigned int Column, const vector<vector<int> > &Puzzle) {
-	// declaring struct that holds the Number coords
-	Coords solution;
-
-	// scan the entire column
-	for (unsigned int i = 0; i < 9; i++) {
-		// if Number found, return solution with the respective coords
-		if (Puzzle[i][Column] == Number) {
-			// defining solution x and y coords
-			solution.x = Column;
-			solution.y = i;
-
-			break;
-		}
-	}
-
-	// returning solution
-	return solution;
-}
-
-Coords GetCoordsOfNumberInLine(unsigned int Number, unsigned int Line, const vector<vector<int> > &Puzzle) {
-	// declaring struct that holds the Number coords
-	Coords solution;
-
-	// scan the entire line
-	for (unsigned int j = 0; j < 9; j++) {
-		// if Number found, return solution with the respective coords
-		if (Puzzle[Line][j] == Number) {
-			// defining solution x and y coords
-			solution.x = j;
-			solution.y = Line;
-
-			break;
-		}
-	}
-
-	// returning solution
-	return solution;
-}
-*/
-
 vector<unsigned int> GetMissingNumbersOnLine(unsigned int Line, const vector<vector<int> > &Puzzle) {
 	// initializing vector with all numbers from 1 to 9
 	vector<unsigned int> missingNumbers;
