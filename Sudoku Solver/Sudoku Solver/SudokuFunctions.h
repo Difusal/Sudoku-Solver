@@ -2,11 +2,6 @@
 
 #include "stdIncludes.h"
 
-struct Coords {
-	unsigned int x;
-	unsigned int y;
-};
-
 bool PuzzleIsSolved(const vector<vector<int> > &Puzzle) {
 	// calculating line and columns sum
 	for (unsigned int i = 0; i < 9; i++) {
@@ -281,4 +276,36 @@ vector<unsigned int> GetPositionsOfEmptyCellsOnColumn(unsigned int Column, const
 
 	// returning vector
 	return emptyCellsPostions;
+}
+
+vector<unsigned int> GetCellCandidates(unsigned int Line, unsigned int Column, const vector<vector<int> > &Puzzle) {
+	// initializing candidates vector
+	vector<unsigned int> candidates;
+	for (unsigned int i = 1; i <= 9; i++)
+		candidates.push_back(i);
+
+	for (unsigned int i = 0; i < candidates.size(); i++) {
+		// if number is on that line, exclude it from candidates
+		if (NumberExistsInLine(candidates[i], Line, Puzzle)) {
+			candidates.erase(candidates.begin() + i);
+			i--;
+			continue;
+		}
+
+		// if number is on that column, exclude it from candidates
+		if (NumberExistsInColumn(candidates[i], Column, Puzzle)) {
+			candidates.erase(candidates.begin() + i);
+			i--;
+			continue;
+		}
+
+		// if number is on that module, exclude it from candidates
+		if (NumberExistsInModule(candidates[i], Column/3, Line/3, Puzzle)) {
+			candidates.erase(candidates.begin() + i);
+			i--;
+			continue;
+		}
+	}
+
+	return candidates;
 }

@@ -12,6 +12,9 @@ void SolverState::Initialize() {
 	submitButton = new Button("Solve this!", buttonX, buttonY, 130, 40);
 	buttons.push_back(submitButton);
 
+	bruteForceID = -1;
+	bruteForceDataMaxSizeAllowed = 1;
+
 	iterationCounter = 0;
 	samePuzzleCycleCounter = 0;
 	sameNumberToBePlacedCounter = 0;
@@ -27,37 +30,125 @@ void SolverState::Initialize() {
 	titleY = titleFont->height/2;
 
 	Control::GetInstance()->Mouse->SetAllReleaseValuesToFalse();
+}
 
-	// hard puzzle that requires bruteforce
-	board->GetPuzzle()[0][0] = 2;
-	board->GetPuzzle()[0][4] = 4;
-	board->GetPuzzle()[0][5] = 1;
-	board->GetPuzzle()[1][0] = 5;
-	board->GetPuzzle()[1][2] = 3;
-	board->GetPuzzle()[1][5] = 2;
-	board->GetPuzzle()[1][7] = 1;
-	board->GetPuzzle()[1][8] = 4;
-	board->GetPuzzle()[2][3] = 9;
-	board->GetPuzzle()[3][0] = 4;
-	board->GetPuzzle()[3][7] = 7;
-	board->GetPuzzle()[4][1] = 9;
-	board->GetPuzzle()[4][2] = 5;
-	board->GetPuzzle()[4][4] = 3;
-	board->GetPuzzle()[5][1] = 2;
-	board->GetPuzzle()[5][2] = 6;
-	board->GetPuzzle()[5][6] = 4;
-	board->GetPuzzle()[5][7] = 9;
-	board->GetPuzzle()[6][3] = 8;
-	board->GetPuzzle()[7][0] = 1;
-	board->GetPuzzle()[7][1] = 3;
-	board->GetPuzzle()[7][4] = 9;
-	board->GetPuzzle()[8][0] = 9;
-	board->GetPuzzle()[8][1] = 5;
-	board->GetPuzzle()[8][3] = 1;
-	board->GetPuzzle()[8][4] = 2;
-	board->GetPuzzle()[8][5] = 4;
-	board->GetPuzzle()[8][6] = 3;
-	board->GetPuzzle()[8][8] = 7;
+void SolverState::CheckIfPuzzleSolvingIsFrozen() {
+	// checking if solver is frozen and needs to use attempts in order to complete puzzle
+	if (!checkingIfFrozen && puzzleClone == board->GetPuzzle())
+		samePuzzleCycleCounter++;
+	// if the puzzle isn't changed for 20 iterations, check if it is frozen
+	if (!checkingIfFrozen && samePuzzleCycleCounter > 20) {
+		cout << "Checking if puzzle is frozen..." << endl;
+		samePuzzleCycleCounter = 0;
+
+		// check if frozen
+		checkingIfFrozen = true;
+		sameNumberToBePlacedCounter = 0;
+		// save number that is trying to be placed
+		numberTempSave = numberToBePlaced;
+	}
+	if (checkingIfFrozen && numberToBePlaced == numberTempSave) {
+		sameNumberToBePlacedCounter++;
+		if (sameNumberToBePlacedCounter > 10) {
+			checkingIfFrozen = false;
+			gameIsFrozen = true;
+		}
+	}
+}
+
+bool SolverState::CheckIfPuzzleIsSolved() {
+	// checking if puzzle is solved
+	if (PuzzleIsSolved(board->GetPuzzle())) {
+		// getting end time
+		endTime = (unsigned int)time(NULL);
+
+		// getting elapsed time
+		elapsedTime = endTime - startTime;
+
+		cout << endl;
+		cout << "   .:::::::::::::::::::.   " << endl;
+		cout << " .:: ! PUZZLE SOLVED ! ::. " << endl;
+		cout << ":::::::::::::::::::::::::::" << endl;
+		cout << "___________________________" << endl;
+		cout << "> Elapsed time: " << elapsedTime << "s" << endl;
+
+		// changing current state
+		CurrentStage = _Resting;
+
+		return true;
+	}
+
+	return false;
+}
+
+void SolverState::CheckForAnyExistingErrors() {
+	// checking for errors in each line
+	for (unsigned int line = 0; line < 9; line++) {
+
+		// if there is only one empty cell on that line
+		if (GetPositionsOfEmptyCellsOnLine(line, board->GetPuzzle()).size() == 1) {
+
+			// but the missing number cannot be placed there, something is wrong!
+			if (!NumberCanBePlacedInCell(GetMissingNumbersOnLine(line, board->GetPuzzle())[0], line, GetPositionsOfEmptyCellsOnLine(line, board->GetPuzzle())[0], board->GetPuzzle())) {
+				cout << "! ERROR DETECTED !" << endl;
+				AttemptNextCandidate();
+				return;
+			}
+		}
+	}
+	// checking for errors in each column
+	for (unsigned int column = 0; column < 9; column++) {
+
+		// if there is only one empty cell on that line
+		if (GetPositionsOfEmptyCellsOnColumn(column, board->GetPuzzle()).size() == 1) {
+
+			// but the missing number cannot be placed there, something is wrong!
+			if (!NumberCanBePlacedInCell(GetMissingNumbersOnColumn(column, board->GetPuzzle())[0], column, GetPositionsOfEmptyCellsOnColumn(column, board->GetPuzzle())[0], board->GetPuzzle())) {
+				cout << "! ERROR DETECTED !" << endl;
+				AttemptNextCandidate();
+				return;
+			}
+		}
+	}
+}
+
+void SolverState::AttemptNextCandidate() {
+	cout << "! ...::: TRYING NEXT CANDIDATE :::... !" << endl;
+
+	// trying the other candidate of the cell being brute forced
+	bruteforceData[bruteForceID].emptyCells[bruteforceData[bruteForceID].emptyCellBeingBruteForced].candidateBeingPlaced++;
+
+	// if for this cell, there are no more candidates
+	if (bruteforceData[bruteForceID].emptyCells[bruteforceData[bruteForceID].emptyCellBeingBruteForced].candidateBeingPlaced >= bruteforceData[bruteForceID].emptyCells[bruteforceData[bruteForceID].emptyCellBeingBruteForced].candidates.size()) {
+		// restarting this value
+		bruteforceData[bruteForceID].emptyCells[bruteforceData[bruteForceID].emptyCellBeingBruteForced].candidateBeingPlaced = 0;
+
+		// restoring puzzle state (emptying cell basically?)
+		board->GetPuzzle() = bruteforceData[bruteForceID].puzzleBackup;
+
+		// bruteforce another cell
+		bruteforceData[bruteForceID].emptyCellBeingBruteForced++;
+
+		// if there are no more cells
+		if (bruteforceData[bruteForceID].emptyCellBeingBruteForced >= bruteforceData[bruteForceID].emptyCells.size()) {
+			bruteforceData[bruteForceID].emptyCellBeingBruteForced = 0;
+			bruteforceData.erase(bruteforceData.begin() + bruteForceID);
+			bruteForceID--;
+			if (bruteForceID < 0) {
+				cout << "Starting New Level Of Backup" << endl;
+				bruteForceDataMaxSizeAllowed++;
+			}
+			else
+				AttemptNextCandidate();
+		}
+	}
+}
+
+void SolverState::ClearBruteForceData() {
+	// clearing previous restore points
+	bruteforceData.clear();
+	bruteForceID = -1;
+	bruteForceDataMaxSizeAllowed = 1;
 }
 
 bool SolverState::Update( ALLEGRO_EVENT *ev ) {
@@ -87,6 +178,8 @@ bool SolverState::Update( ALLEGRO_EVENT *ev ) {
 
 		// changing current state
 		CurrentStage = _Solving;
+
+		ClearBruteForceData();
 	}
 
 	// keep going
@@ -103,81 +196,64 @@ bool SolverState::Update( ALLEGRO_EVENT *ev ) {
 		{
 			// incrementing iteration counter
 			iterationCounter++;
-			cout << "Iteration: " << iterationCounter << endl;
+			cout << "Iteration: " << iterationCounter << "  " << "Bruteforce ID: " << bruteForceID << endl;
 
-			// checking if puzzle is solved
-			if (PuzzleIsSolved(board->GetPuzzle())) {
-				// getting end time
-				endTime = (unsigned int)time(NULL);
-
-				// getting elapsed time
-				elapsedTime = endTime - startTime;
-
-				cout << "! ..:: PUZZLE SOLVED ::.. !" << endl;
-				cout << "Elapsed time: " << elapsedTime << "s" << endl;
-
-				// changing current state
-				CurrentStage = _Resting;
-
+			// if CheckIfPuzzleIsSolved() returns true, puzzle is solved. so return true
+			if (CheckIfPuzzleIsSolved())
 				return true;
-			}
 
-			// checking for errors in each line
-			for (unsigned int line = 0; line < 9; line++) {
-
-				// if there is only one empty cell on that line
-				if (GetPositionsOfEmptyCellsOnLine(line, board->GetPuzzle()).size() == 1) {
-
-					// but the missing number cannot be placed there, something is wrong!
-					if (!NumberCanBePlacedInCell(GetMissingNumbersOnLine(line, board->GetPuzzle())[0], line, GetPositionsOfEmptyCellsOnLine(line, board->GetPuzzle())[0], board->GetPuzzle())) {
-						cout << "! ERROR !" << endl;
-						break;
-					}
-				}
-			}
-			// checking for errors in each column
-			for (unsigned int column = 0; column < 9; column++) {
-
-				// if there is only one empty cell on that line
-				if (GetPositionsOfEmptyCellsOnColumn(column, board->GetPuzzle()).size() == 1) {
-
-					// but the missing number cannot be placed there, something is wrong!
-					if (!NumberCanBePlacedInCell(GetMissingNumbersOnColumn(column, board->GetPuzzle())[0], column, GetPositionsOfEmptyCellsOnColumn(column, board->GetPuzzle())[0], board->GetPuzzle())) {
-						cout << "! ERROR !" << endl;
-						break;
-					}
-				}
-			}
-
-			// checking if solver is frozen and needs to use attempts in order to complete puzzle
-			if (!checkingIfFrozen && puzzleClone == board->GetPuzzle())
-				samePuzzleCycleCounter++;
-			// if the puzzle isn't changed for 20 iterations, check if it is frozen
-			if (!checkingIfFrozen && samePuzzleCycleCounter > 20) {
-				cout << "Checking if puzzle is frozen..." << endl;
-				samePuzzleCycleCounter = 0;
-
-				// check if frozen
-				checkingIfFrozen = true;
-				sameNumberToBePlacedCounter = 0;
-				// save number that is trying to be placed
-				numberTempSave = numberToBePlaced;
-			}
-			if (checkingIfFrozen && numberToBePlaced == numberTempSave) {
-				sameNumberToBePlacedCounter++;
-				if (sameNumberToBePlacedCounter > 4) {
-					checkingIfFrozen = false;
-					gameIsFrozen = true;
-				}
-			}
+			CheckForAnyExistingErrors();
+			CheckIfPuzzleSolvingIsFrozen();
 
 			if (gameIsFrozen) {
-				cout << "Game is frozen" << endl;
+				gameIsFrozen = false;
+				cout << "============= Game is frozen =============" << endl;
+
+				// creating new restore point
+				if (bruteForceID == -1 ||
+					(board->GetPuzzle() != bruteforceData[bruteForceID].puzzleBackup &&
+					bruteforceData.size() < bruteForceDataMaxSizeAllowed)) {
+					bruteForceID++;
+
+					BruteforcingData tempData;
+					// saving current puzzle state
+					tempData.puzzleBackup = board->GetPuzzle();
+					// saving empty cells sorted by candidate numbers
+					for (unsigned int line = 0; line < 9; line++) {
+						for (unsigned int column = 0; column < 9; column++) {
+							// skip if cell is not empty
+							if (board->GetPuzzle()[line][column] != 0)
+								continue;
+
+							CellDetails tempCellDetails;
+							tempCellDetails.candidates = GetCellCandidates(line, column, board->GetPuzzle());
+							tempCellDetails.coords.x = column;
+							tempCellDetails.coords.y = line;
+							tempCellDetails.candidateBeingPlaced = 0;
+
+							tempData.emptyCells.push_back(tempCellDetails);
+							tempData.emptyCellBeingBruteForced = 0;
+						}
+					}
+					// sorting emptyCells vector by number of candidates (starting with the one which has less candidates)
+					sort(tempData.emptyCells.begin(), tempData.emptyCells.end(), [](CellDetails a, CellDetails b) { return a.candidates.size() < b.candidates.size(); });
+
+					// pushing entire data to bruteforceData
+					bruteforceData.push_back(tempData);
+				}
+				else {
+					AttemptNextCandidate();
+				}
+
+				// trying to solve puzzle by brute forcing candidates right now
+				unsigned int temp_x, temp_y;
+				temp_x = bruteforceData[bruteForceID].emptyCells[bruteforceData[bruteForceID].emptyCellBeingBruteForced].coords.x;
+				temp_y = bruteforceData[bruteForceID].emptyCells[bruteforceData[bruteForceID].emptyCellBeingBruteForced].coords.y;
+				board->GetPuzzle()[temp_y][temp_x] = bruteforceData[bruteForceID].emptyCells[bruteforceData[bruteForceID].emptyCellBeingBruteForced].candidates[bruteforceData[bruteForceID].emptyCells[bruteforceData[bruteForceID].emptyCellBeingBruteForced].candidateBeingPlaced];
 			}
 
 			// keeping record of puzzle current state before the iteration makes changes to it
 			puzzleClone = board->GetPuzzle();
-
 
 			// trying to complete a line
 			for (unsigned int line = 0; line < 9; line++) {
@@ -307,23 +383,10 @@ bool SolverState::Update( ALLEGRO_EVENT *ev ) {
 						}
 					}
 
-					// debugging block to show content of possibilities vector
-					/*
-					for (unsigned int i = 0; i < 3; i++) {
-						for (unsigned int j = 0; j < 3; j++) {
-							cout << possibilities[i][j] << "  ";
-							if (j == 2)
-								cout << endl;
-						}
-					}
-					cout << endl;
-					*/
-
 					// if there is only one possibility on that module to place the current number, finally place it! :D
 					if (OnlyOnePossibility(possibilities)) {
 						PlaceNumberOnTheOnlyPossibleCell(numberToBePlaced, moduleBeingScannedX, moduleBeingScannedY, board->GetPuzzle(), possibilities);
 						numberWasPlacedSomewhere = true;
-						return true;
 					}
 				}
 			}
@@ -338,6 +401,7 @@ bool SolverState::Update( ALLEGRO_EVENT *ev ) {
 			// incrementing number to be placed
 			numberToBePlaced++;
 
+			return true;
 			break;
 		}
 

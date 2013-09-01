@@ -7,9 +7,32 @@
 #include "Board.h"
 #include "Button.h"
 
+struct Coords {
+	unsigned int x;
+	unsigned int y;
+};
+
+struct CellDetails {
+	Coords coords;
+	vector<unsigned int> candidates;
+	unsigned int candidateBeingPlaced;
+};
+
+struct BruteforcingData {
+	vector<vector<int> > puzzleBackup;
+	vector<CellDetails> emptyCells;
+	unsigned int emptyCellBeingBruteForced;
+};
+
+
 class SolverState: public State {
 public:
 	virtual void Initialize();
+	bool CheckIfPuzzleIsSolved();
+	void CheckForAnyExistingErrors();
+	void CheckIfPuzzleSolvingIsFrozen();
+	void AttemptNextCandidate();
+	void ClearBruteForceData();
 	virtual bool Update( ALLEGRO_EVENT *ev );
 	virtual void Draw();
 	virtual void Terminate();
@@ -20,6 +43,10 @@ private:
 	SolverStage CurrentStage;
 	Board *board;
 	vector<vector<int> > puzzleClone;
+
+	int bruteForceID;
+	unsigned int bruteForceDataMaxSizeAllowed;
+	vector<BruteforcingData> bruteforceData;
 
 	vector<Button*> buttons;
 	Button *submitButton;
