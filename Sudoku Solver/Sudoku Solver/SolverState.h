@@ -24,10 +24,12 @@ private:
 	vector<Button*> buttons;
 	Button *submitButton;
 
+	unsigned int iterationCounter;
+	unsigned int samePuzzleCycleCounter, sameNumberToBePlacedCounter, numberTempSave;
 	unsigned int numberToBePlaced;
 	unsigned int startTime, endTime, elapsedTime;
 
-	bool solverJustStarted;
+	bool gameIsFrozen, checkingIfFrozen;
 	bool puzzleHasBeenSolved;
 	bool showPuzzleSolvedNotification;
 

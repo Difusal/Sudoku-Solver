@@ -121,15 +121,23 @@ void Board::MoveCellSelection( Direction direction ) {
 	switch (direction) {
 	case RIGHT:
 		SelectedCellX += CellSize;
+		if (SelectedCellX >= BoardX + BoardWidth)
+			SelectedCellX = BoardX + BoardWidth - CellSize;
 		break;
 	case LEFT:
 		SelectedCellX -= CellSize;
+		if (SelectedCellX < BoardX)
+			SelectedCellX = BoardX;
 		break;
 	case DOWN:
 		SelectedCellY += CellSize;
+		if (SelectedCellY >= BoardY + BoardHeight)
+			SelectedCellY = BoardY + BoardHeight - CellSize;
 		break;
 	case UP:
 		SelectedCellY -= CellSize;
+		if (SelectedCellY < BoardY)
+			SelectedCellY = BoardY;
 		break;
 	}
 }

@@ -12,9 +12,13 @@ void SolverState::Initialize() {
 	submitButton = new Button("Solve this!", buttonX, buttonY, 130, 40);
 	buttons.push_back(submitButton);
 
+	iterationCounter = 0;
+	samePuzzleCycleCounter = 0;
+	sameNumberToBePlacedCounter = 0;
 	numberToBePlaced = 1;
 
-	solverJustStarted = true;
+	gameIsFrozen = false;
+	checkingIfFrozen = false;
 	puzzleHasBeenSolved = false;
 	showPuzzleSolvedNotification = false;
 
@@ -23,6 +27,37 @@ void SolverState::Initialize() {
 	titleY = titleFont->height/2;
 
 	Control::GetInstance()->Mouse->SetAllReleaseValuesToFalse();
+
+	// hard puzzle that requires bruteforce
+	board->GetPuzzle()[0][0] = 2;
+	board->GetPuzzle()[0][4] = 4;
+	board->GetPuzzle()[0][5] = 1;
+	board->GetPuzzle()[1][0] = 5;
+	board->GetPuzzle()[1][2] = 3;
+	board->GetPuzzle()[1][5] = 2;
+	board->GetPuzzle()[1][7] = 1;
+	board->GetPuzzle()[1][8] = 4;
+	board->GetPuzzle()[2][3] = 9;
+	board->GetPuzzle()[3][0] = 4;
+	board->GetPuzzle()[3][7] = 7;
+	board->GetPuzzle()[4][1] = 9;
+	board->GetPuzzle()[4][2] = 5;
+	board->GetPuzzle()[4][4] = 3;
+	board->GetPuzzle()[5][1] = 2;
+	board->GetPuzzle()[5][2] = 6;
+	board->GetPuzzle()[5][6] = 4;
+	board->GetPuzzle()[5][7] = 9;
+	board->GetPuzzle()[6][3] = 8;
+	board->GetPuzzle()[7][0] = 1;
+	board->GetPuzzle()[7][1] = 3;
+	board->GetPuzzle()[7][4] = 9;
+	board->GetPuzzle()[8][0] = 9;
+	board->GetPuzzle()[8][1] = 5;
+	board->GetPuzzle()[8][3] = 1;
+	board->GetPuzzle()[8][4] = 2;
+	board->GetPuzzle()[8][5] = 4;
+	board->GetPuzzle()[8][6] = 3;
+	board->GetPuzzle()[8][8] = 7;
 }
 
 bool SolverState::Update( ALLEGRO_EVENT *ev ) {
@@ -66,6 +101,10 @@ bool SolverState::Update( ALLEGRO_EVENT *ev ) {
 		// if puzzle has been submitted so it can be solved
 	case _Solving:
 		{
+			// incrementing iteration counter
+			iterationCounter++;
+			cout << "Iteration: " << iterationCounter << endl;
+
 			// checking if puzzle is solved
 			if (PuzzleIsSolved(board->GetPuzzle())) {
 				// getting end time
@@ -110,14 +149,34 @@ bool SolverState::Update( ALLEGRO_EVENT *ev ) {
 				}
 			}
 
-			if (!solverJustStarted && puzzleClone == board->GetPuzzle())
-				cout << "Solver Froze!" << endl;
-
 			// checking if solver is frozen and needs to use attempts in order to complete puzzle
-			if (numberToBePlaced == 3) {
-				solverJustStarted = false;
-				puzzleClone = board->GetPuzzle();
+			if (!checkingIfFrozen && puzzleClone == board->GetPuzzle())
+				samePuzzleCycleCounter++;
+			// if the puzzle isn't changed for 20 iterations, check if it is frozen
+			if (!checkingIfFrozen && samePuzzleCycleCounter > 20) {
+				cout << "Checking if puzzle is frozen..." << endl;
+				samePuzzleCycleCounter = 0;
+
+				// check if frozen
+				checkingIfFrozen = true;
+				sameNumberToBePlacedCounter = 0;
+				// save number that is trying to be placed
+				numberTempSave = numberToBePlaced;
 			}
+			if (checkingIfFrozen && numberToBePlaced == numberTempSave) {
+				sameNumberToBePlacedCounter++;
+				if (sameNumberToBePlacedCounter > 4) {
+					checkingIfFrozen = false;
+					gameIsFrozen = true;
+				}
+			}
+
+			if (gameIsFrozen) {
+				cout << "Game is frozen" << endl;
+			}
+
+			// keeping record of puzzle current state before the iteration makes changes to it
+			puzzleClone = board->GetPuzzle();
 
 
 			// trying to complete a line
