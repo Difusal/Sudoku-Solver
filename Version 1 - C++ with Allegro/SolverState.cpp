@@ -78,7 +78,8 @@ void SolverState::clear(int j, int i) {
 }
 
 bool SolverState::solve() {
-	Draw();
+	board->Draw();
+	al_flip_display();
 
 	if (isComplete())
 		return true;
@@ -166,18 +167,31 @@ bool SolverState::Update(ALLEGRO_EVENT *ev) {
 		// unselect any active cell
 		board->UnselectAnyCell();
 
-		// getting numbers of the puzzle
-		numbers = board->GetPuzzle();
-
 		// initializing data
 		countFilled = 0;
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
 				for (int n = 0; n < 10; n++) {
-					numbers[i][j] = 0;
 					lineHasNumber[i][n] = false;
 					columnHasNumber[j][n] = false;
 					block3x3HasNumber[i / 3][j / 3][n] = false;
+				}
+			}
+		}
+
+		// getting numbers of the puzzle
+		numbers = board->GetPuzzle();
+
+		// updating data
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				if (numbers[i][j] != 0) {
+					int n = numbers[i][j];
+					numbers[i][j] = n;
+					lineHasNumber[i][n] = true;
+					columnHasNumber[j][n] = true;
+					block3x3HasNumber[i / 3][j / 3][n] = true;
+					countFilled++;
 				}
 			}
 		}
