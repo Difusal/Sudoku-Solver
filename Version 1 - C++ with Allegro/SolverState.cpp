@@ -79,7 +79,7 @@ void SolverState::clear(int j, int i) {
 
 bool SolverState::solve() {
 	board->Draw();
-	al_flip_display();
+	//al_flip_display();
 
 	if (isComplete())
 		return true;
