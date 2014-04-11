@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -17,7 +18,9 @@ import logic.Direction;
 public class BoardPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private double dim, horMargin, verMargin;
+
 	private SelectedCell selectedCell;
+	private int[][] numbers = new int[9][9];
 
 	public BoardPanel() {
 		setFocusable(true);
@@ -41,6 +44,7 @@ public class BoardPanel extends JPanel {
 		g2d.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
 
 		drawBoard(g);
+		drawNumbers(g);
 	}
 
 	private void drawBoard(Graphics g) {
@@ -63,7 +67,7 @@ public class BoardPanel extends JPanel {
 				(int) Math.round(getHeight() - 2 * verMargin));
 
 		// selected cell
-		if (selectedCell.isVisible()) {
+		if (selectedCell.isValid()) {
 			g2d.setColor(Color.YELLOW);
 
 			double d = dim / 9;
@@ -113,6 +117,25 @@ public class BoardPanel extends JPanel {
 				(int) Math.round(getHeight() - 2 * verMargin));
 	}
 
+	public void drawNumbers(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
+
+		int fontHeight = (int) (0.1 * dim);
+		int charHorMargin = (int) (0.25 * dim / 9);
+		int charVerMargin = (int) -(0.08 * dim / 9);
+		g.setFont(new Font("Helvetica", Font.PLAIN, fontHeight));
+
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				if (numbers[i][j] != 0) {
+					g2d.drawString("" + numbers[i][j], (int) (horMargin
+							+ charHorMargin + j * dim / 9), (int) (verMargin
+							+ fontHeight + charVerMargin + i * dim / 9));
+				}
+			}
+		}
+	}
+
 	private class MyMouseAdapter extends MouseAdapter {
 		public void mouseClicked(MouseEvent e) {
 			if (e.getX() < horMargin || e.getX() > horMargin + dim
@@ -144,24 +167,113 @@ public class BoardPanel extends JPanel {
 	private class MyKeyboardAdapter extends KeyAdapter {
 		public void keyPressed(KeyEvent e) {
 			switch (e.getKeyCode()) {
+			case KeyEvent.VK_ESCAPE:
+				selectedCell.hide();
+				break;
 			case KeyEvent.VK_UP:
+			case KeyEvent.VK_W:
 				selectedCell.move(Direction.UP);
 				break;
 			case KeyEvent.VK_LEFT:
+			case KeyEvent.VK_A:
 				selectedCell.move(Direction.LEFT);
 				break;
 			case KeyEvent.VK_DOWN:
+			case KeyEvent.VK_S:
 				selectedCell.move(Direction.DOWN);
 				break;
 			case KeyEvent.VK_RIGHT:
+			case KeyEvent.VK_D:
 				selectedCell.move(Direction.RIGHT);
 				break;
-			case KeyEvent.VK_ESCAPE:
-				selectedCell.hide();
+			case KeyEvent.VK_BACK_SPACE:
+			case KeyEvent.VK_0:
+				if (selectedCell.isValid()) {
+					int x = (int) selectedCell.getX();
+					int y = (int) selectedCell.getY();
+
+					numbers[y][x] = 0;
+				}
+				break;
+			case KeyEvent.VK_1:
+				if (selectedCell.isValid()) {
+					int x = (int) selectedCell.getX();
+					int y = (int) selectedCell.getY();
+
+					numbers[y][x] = 1;
+				}
+				break;
+			case KeyEvent.VK_2:
+				if (selectedCell.isValid()) {
+					int x = (int) selectedCell.getX();
+					int y = (int) selectedCell.getY();
+
+					numbers[y][x] = 2;
+				}
+				break;
+			case KeyEvent.VK_3:
+				if (selectedCell.isValid()) {
+					int x = (int) selectedCell.getX();
+					int y = (int) selectedCell.getY();
+
+					numbers[y][x] = 3;
+				}
+				break;
+			case KeyEvent.VK_4:
+				if (selectedCell.isValid()) {
+					int x = (int) selectedCell.getX();
+					int y = (int) selectedCell.getY();
+
+					numbers[y][x] = 4;
+				}
+				break;
+			case KeyEvent.VK_5:
+				if (selectedCell.isValid()) {
+					int x = (int) selectedCell.getX();
+					int y = (int) selectedCell.getY();
+
+					numbers[y][x] = 5;
+				}
+				break;
+			case KeyEvent.VK_6:
+				if (selectedCell.isValid()) {
+					int x = (int) selectedCell.getX();
+					int y = (int) selectedCell.getY();
+
+					numbers[y][x] = 6;
+				}
+				break;
+			case KeyEvent.VK_7:
+				if (selectedCell.isValid()) {
+					int x = (int) selectedCell.getX();
+					int y = (int) selectedCell.getY();
+
+					numbers[y][x] = 7;
+				}
+				break;
+			case KeyEvent.VK_8:
+				if (selectedCell.isValid()) {
+					int x = (int) selectedCell.getX();
+					int y = (int) selectedCell.getY();
+
+					numbers[y][x] = 8;
+				}
+				break;
+			case KeyEvent.VK_9:
+				if (selectedCell.isValid()) {
+					int x = (int) selectedCell.getX();
+					int y = (int) selectedCell.getY();
+
+					numbers[y][x] = 9;
+				}
 				break;
 			}
 
 			repaint();
 		}
+	}
+
+	public int[][] getNumbers() {
+		return numbers;
 	}
 }

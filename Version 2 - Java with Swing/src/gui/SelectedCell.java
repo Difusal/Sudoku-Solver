@@ -32,7 +32,7 @@ public class SelectedCell extends Point {
 		}
 	}
 
-	public boolean isVisible() {
+	public boolean isValid() {
 		return (0 <= x && x < 9 && 0 <= y && y < 9);
 	}
 

@@ -4,14 +4,20 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import logic.Solver;
 
 public class Window {
 	private JFrame frame;
 	private BoardPanel boardPanel;
+	private Solver solver;
 
 	public Window() {
 		frame = new JFrame();
@@ -36,6 +42,7 @@ public class Window {
 	private void setPanels() {
 		boardPanel = new BoardPanel();
 		frame.getContentPane().add(boardPanel, BorderLayout.CENTER);
+		solver = new Solver(boardPanel);
 
 		JPanel solveBtnPanel = new JPanel();
 		solveBtnPanel.setFocusable(false);
@@ -44,6 +51,14 @@ public class Window {
 
 		JButton solveButton = new JButton("Solve");
 		solveButton.setFocusable(false);
+		solveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (solver.start())
+					JOptionPane.showMessageDialog(frame, "Sudoku Solved");
+				else
+					JOptionPane.showMessageDialog(frame, "Invalid Sudoku");
+			}
+		});
 		solveBtnPanel.add(solveButton);
 	}
 }
