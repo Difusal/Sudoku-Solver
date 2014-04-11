@@ -273,6 +273,11 @@ public class BoardPanel extends JPanel {
 		}
 	}
 
+	public void clear() {
+		numbers = new int[9][9];		
+		repaint();
+	}
+
 	public int[][] getNumbers() {
 		return numbers;
 	}

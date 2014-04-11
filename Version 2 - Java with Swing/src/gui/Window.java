@@ -17,6 +17,7 @@ import logic.Solver;
 public class Window {
 	private JFrame frame;
 	private BoardPanel boardPanel;
+	private JButton btnClear, btnSolve;
 	private Solver solver;
 
 	public Window() {
@@ -44,14 +45,23 @@ public class Window {
 		frame.getContentPane().add(boardPanel, BorderLayout.CENTER);
 		solver = new Solver(boardPanel);
 
-		JPanel solveBtnPanel = new JPanel();
-		solveBtnPanel.setFocusable(false);
-		solveBtnPanel.setBackground(new Color(104, 205, 63));
-		frame.getContentPane().add(solveBtnPanel, BorderLayout.SOUTH);
+		JPanel btnsPanel = new JPanel();
+		btnsPanel.setFocusable(false);
+		btnsPanel.setBackground(new Color(104, 205, 63));
+		frame.getContentPane().add(btnsPanel, BorderLayout.SOUTH);
 
-		JButton solveButton = new JButton("Solve");
-		solveButton.setFocusable(false);
-		solveButton.addActionListener(new ActionListener() {
+		btnClear = new JButton("Clear");
+		btnClear.setFocusable(false);
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				boardPanel.clear();
+			}
+		});
+		btnsPanel.add(btnClear);
+		
+		btnSolve = new JButton("Solve");
+		btnSolve.setFocusable(false);
+		btnSolve.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (solver.start())
 					JOptionPane.showMessageDialog(frame, "Sudoku Solved");
@@ -59,6 +69,6 @@ public class Window {
 					JOptionPane.showMessageDialog(frame, "Invalid Sudoku");
 			}
 		});
-		solveBtnPanel.add(solveButton);
+		btnsPanel.add(btnSolve);
 	}
 }
